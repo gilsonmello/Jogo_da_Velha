@@ -3,10 +3,13 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/Junnyor/Documents/NetBeansProjects/Jogo_da_Velha/src/app/Peca.java</file>
-            <file>file:/C:/Users/Junnyor/Documents/NetBeansProjects/Jogo_da_Velha/src/app/Tabuleiro.java</file>
-            <file>file:/C:/Users/Junnyor/Documents/NetBeansProjects/Jogo_da_Velha/src/States/Tabuleiro/TabuleiroState.java</file>
-            <file>file:/C:/Users/Junnyor/Documents/NetBeansProjects/Jogo_da_Velha/src/States/Tabuleiro/TabuleiroFinalizado.java</file>
+            <file>file:/C:/Users/Junnyor/Documents/NetBeansProjects/Jogo_da_Velha/src/app/TabuleiroGUI.java</file>
+            <file>file:/C:/Users/Junnyor/Documents/NetBeansProjects/Jogo_da_Velha/src/app/Botao.java</file>
+            <file>file:/C:/Users/Junnyor/Documents/NetBeansProjects/Jogo_da_Velha/src/Strategies/JogadorO.java</file>
+            <file>file:/C:/Users/Junnyor/Documents/NetBeansProjects/Jogo_da_Velha/src/Prototype/Peca.java</file>
+            <file>file:/C:/Users/Junnyor/Documents/NetBeansProjects/Jogo_da_Velha/src/Strategies/JogadorStrategy.java</file>
+            <file>file:/C:/Users/Junnyor/Documents/NetBeansProjects/Jogo_da_Velha/src/Prototype/PecaRepositorio.java</file>
+            <file>file:/C:/Users/Junnyor/Documents/NetBeansProjects/Jogo_da_Velha/src/Strategies/TipoJogador.java</file>
         </group>
     </open-files>
 </project-private>
