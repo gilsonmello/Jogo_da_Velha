@@ -15,8 +15,18 @@ import app.TabuleiroGUI;
  */
 public class TabuleiroIniciado implements TabuleiroState {
     
+    private String nome = "Iniciado";
+    
     public TabuleiroIniciado() {
         
+    }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
     }
 
     @Override

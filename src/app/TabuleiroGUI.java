@@ -5,7 +5,9 @@
  */
 package app;
 
-import Mementos.TabuleiroMemento;
+import Iterators.BotoesIterator;
+import Mementos.CareTake;
+import Mementos.Memento;
 import Prototype.Peca;
 import States.Tabuleiro.TabuleiroFinalizado;
 import States.Tabuleiro.TabuleiroIniciado;
@@ -13,9 +15,7 @@ import States.Tabuleiro.TabuleiroState;
 import Strategies.JogadorStrategy;
 import Strategies.TipoJogador;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.awt.event.WindowEvent;
 
 
 /**
@@ -26,36 +26,126 @@ public class TabuleiroGUI extends javax.swing.JFrame {
     
     private Tabuleiro tabuleiro;
     
+    private int quantidadeClick = 1;
+    
     public Botao[][] botoes;
+    
+    private int mementoPosicao = -1;
     
     static TabuleiroGUI tabuleiroGUI;
     
     private JogadorStrategy jogador;
     
+    private TabuleiroState estado;
+    
+    private CareTake careTake;
+    
+    private Memento memento;
+    
+    public int getMementoPosicao() {
+        return this.mementoPosicao;
+    }
+    
+    public void setMementoPosicao(int mementoPosicao) {
+        this.mementoPosicao = mementoPosicao;
+    }
+    
+    public void setQuantidadeClick(int quantidadeClick) {
+        this.quantidadeClick = quantidadeClick;
+    }
+    
+    public int getQuantidadeClick() {
+        return this.quantidadeClick;
+    }
+    
+    public Memento salvarMemento() {
+        this.memento = new Memento(this);
+        return this.memento;
+    }
+    
+    public void getMemento(Memento ultimoEstado) {
+       this.memento = ultimoEstado;
+    }
+    
+    public void setBotoes(Botao[][] botoes) {
+        this.botoes = botoes;
+    }
+    
+    public Botao[][] getBotoes() {
+        return this.botoes;
+    }
     
     /**
      * Creates new form Tabuleiro
-     * @param tabuleiro
-     * @param botoes
      */
-    public TabuleiroGUI(Tabuleiro tabuleiro, Botao[][] botoes) {
+    public TabuleiroGUI() {
         initComponents();
-        this.botoes = botoes;
-        this.tabuleiro = tabuleiro;
+        this.careTake = new CareTake();
+    }
+    
+    /**
+     * 
+     */
+    public void init() {       
         
-        TabuleiroIniciado tabuleiroIniciado = new TabuleiroIniciado();        
-        this.tabuleiro.setEstado(tabuleiroIniciado);
-        this.tabuleiro.iniciar();
+        this.lbFinalizado.setText(this.tabuleiro.getEstado().getNome());       
         
+        this.lbJogador.setText(this.jogador.getTipo().getNome());    
+    }
+    
+    /**
+     * 
+     * @return JogadorStrategy
+     */
+    public JogadorStrategy getJogador() {
+        return this.jogador;
+    }
+    
+    /**
+     * 
+     * @param jogador 
+     */
+    public void setJogador(JogadorStrategy jogador) {
         //Iniciando com jogador do tipo X
-        TipoJogador tipoJogador = TipoJogador.values()[0];
-        this.jogador = tipoJogador.obterJogador();
-        
-        this.lbJogador.setText(this.jogador.getTipo().getNome());
-        
-        
-        
-        
+        this.jogador = jogador;
+    }
+    
+    /**
+     * 
+     * @return TabuleiroState
+     */
+    public TabuleiroState getEstado() {
+        return this.estado;        
+    }
+    
+    /**
+     * 
+     * @param estado 
+     */
+    public void setEstado(TabuleiroState estado) {
+        this.estado = estado;        
+        this.tabuleiro.setEstado(this.estado);        
+    }
+    
+    /**
+     * 
+     * @param tabuleiro 
+     */
+    public void setTabuleiro(Tabuleiro tabuleiro) {
+        this.tabuleiro = tabuleiro;
+    }
+  
+    /**
+     * 
+     * @return 
+     */
+    public Tabuleiro getTabuleiro() {
+        return this.tabuleiro;
+    }
+    
+    public void salvarEstado() {     
+        this.careTake.add(salvarMemento());
+        this.mementoPosicao++;
     }
 
     /**
@@ -70,9 +160,10 @@ public class TabuleiroGUI extends javax.swing.JFrame {
         jPanel1 = new javax.swing.JPanel();
         lbJogador = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
-        btnSalvar = new javax.swing.JButton();
         btnRestaurar = new javax.swing.JButton();
-        btnFinalizar = new javax.swing.JButton();
+        lbJogoFinalizado = new javax.swing.JLabel();
+        btnReiniciar = new javax.swing.JButton();
+        lbFinalizado = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -87,32 +178,29 @@ public class TabuleiroGUI extends javax.swing.JFrame {
             .addGap(0, 0, Short.MAX_VALUE)
         );
 
-        lbJogador.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
+        lbJogador.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
         lbJogador.setText("X");
 
-        jLabel2.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
+        jLabel2.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
         jLabel2.setText("Jogador");
 
-        btnSalvar.setText("Salvar");
-        btnSalvar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnSalvarActionPerformed(evt);
-            }
-        });
-
-        btnRestaurar.setText("Restaurar Jogo");
+        btnRestaurar.setText("Voltar uma jogada");
+        btnRestaurar.setEnabled(false);
         btnRestaurar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnRestaurarActionPerformed(evt);
             }
         });
 
-        btnFinalizar.setText("Finalizar");
-        btnFinalizar.addActionListener(new java.awt.event.ActionListener() {
+        btnReiniciar.setText("Reiniciar");
+        btnReiniciar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnFinalizarActionPerformed(evt);
+                btnReiniciarActionPerformed(evt);
             }
         });
+
+        lbFinalizado.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
+        lbFinalizado.setText("jLabel1");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -124,30 +212,35 @@ public class TabuleiroGUI extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel2)
+                        .addComponent(lbFinalizado)
                         .addGap(18, 18, 18)
-                        .addComponent(lbJogador))
+                        .addComponent(lbJogoFinalizado))
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(btnSalvar)
-                        .addGap(18, 18, 18)
-                        .addComponent(btnRestaurar))
-                    .addComponent(btnFinalizar))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(btnRestaurar)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnReiniciar))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(lbJogador)))
+                .addContainerGap(18, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(20, 20, 20)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnSalvar)
-                    .addComponent(btnRestaurar))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btnFinalizar)
-                .addGap(45, 45, 45)
+                    .addComponent(btnRestaurar)
+                    .addComponent(btnReiniciar))
+                .addGap(55, 55, 55)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lbJogador)
-                    .addComponent(jLabel2))
-                .addContainerGap(137, Short.MAX_VALUE))
+                    .addComponent(jLabel2)
+                    .addComponent(lbJogador))
+                .addGap(73, 73, 73)
+                .addComponent(lbJogoFinalizado)
+                .addGap(11, 11, 11)
+                .addComponent(lbFinalizado)
+                .addContainerGap(55, Short.MAX_VALUE))
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -157,19 +250,49 @@ public class TabuleiroGUI extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void btnSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalvarActionPerformed
-        
-    }//GEN-LAST:event_btnSalvarActionPerformed
-
     private void btnRestaurarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRestaurarActionPerformed
-        // TODO add your handling code here:
+        this.mementoPosicao--;
+        
+        this.memento = this.careTake.get(this.mementoPosicao);  
+        
+        tabuleiroGUI = (TabuleiroGUI) this.memento.getEstado();
+        
+        Botao[][] botes = tabuleiroGUI.getBotoes();
+        
+        for(int i = 0; i < 3; i++) {
+            for(int j = 0; j < 3; j++) {
+                System.out.println("-"+botes[i][j].getText());
+            }
+        }
+        
+        tabuleiroGUI.setBotoes(tabuleiroGUI.getBotoes());
+        tabuleiroGUI.setTabuleiro(tabuleiroGUI.getTabuleiro());
+        tabuleiroGUI.setEstado(tabuleiroGUI.getEstado());
+        tabuleiroGUI.setJogador(tabuleiroGUI.getJogador());
+        tabuleiroGUI.setQuantidadeClick(tabuleiroGUI.getQuantidadeClick());
+        tabuleiroGUI.setMementoPosicao(tabuleiroGUI.getMementoPosicao());
+        tabuleiroGUI.desenhar();
+        tabuleiroGUI.init();
+        
     }//GEN-LAST:event_btnRestaurarActionPerformed
 
-    private void btnFinalizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnFinalizarActionPerformed
-        TabuleiroFinalizado tabuleiroFinalizado = new TabuleiroFinalizado();        
-        tabuleiroGUI.getTabuleiro().setEstado(tabuleiroFinalizado);
-        tabuleiroGUI.getTabuleiro().finalizar();
-    }//GEN-LAST:event_btnFinalizarActionPerformed
+    private void btnReiniciarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnReiniciarActionPerformed
+        tabuleiroGUI.setBotoes(new Botao[3][3]);
+        tabuleiroGUI.setTabuleiro(new Tabuleiro());
+        tabuleiroGUI.setEstado(new TabuleiroIniciado());
+        TipoJogador tipoJogador = TipoJogador.values()[0];
+        tabuleiroGUI.setJogador(tipoJogador.obterJogador());
+        tabuleiroGUI.desenhar();
+        tabuleiroGUI.salvarEstado();
+        tabuleiroGUI.init();
+        tabuleiroGUI.setVisible(true);
+        tabuleiroGUI.setQuantidadeClick(1);
+        this.btnRestaurar.setEnabled(false);
+        this.lbJogador.setText(this.jogador.getTipo().getNome());
+        this.jLabel2.setText("Jogador");
+        this.lbFinalizado.setText(this.tabuleiro.getEstado().getNome());
+        this.lbFinalizado.setEnabled(true);
+    }//GEN-LAST:event_btnReiniciarActionPerformed
 
     /**
      * @param args the command line arguments
@@ -203,39 +326,66 @@ public class TabuleiroGUI extends javax.swing.JFrame {
         java.awt.EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
-                tabuleiroGUI = new TabuleiroGUI(new Tabuleiro(), new Botao[3][3]);
+                tabuleiroGUI = TabuleiroGUI.getInstance();
+                tabuleiroGUI.setBotoes(new Botao[3][3]);
+                tabuleiroGUI.setTabuleiro(new Tabuleiro());
+                tabuleiroGUI.setEstado(new TabuleiroIniciado());
+                TipoJogador tipoJogador = TipoJogador.values()[0];
+                tabuleiroGUI.setJogador(tipoJogador.obterJogador());
+                tabuleiroGUI.desenhar();
+                tabuleiroGUI.salvarEstado();
+                tabuleiroGUI.init();
                 tabuleiroGUI.setVisible(true);
-                tabuleiroGUI.desenhar();              
             }
         });
     }
-
-    public Tabuleiro getTabuleiro() {
-        return tabuleiro;
-    }
-
-    public void setTabuleiro(Tabuleiro tabuleiro) {
-        this.tabuleiro = tabuleiro;
-    }
     
+    /**
+     * Implementação do padrão singleton
+     * @return 
+     */
+    public static TabuleiroGUI getInstance() {
+        if(tabuleiroGUI != null) {
+            return  null;
+        }        
+        return new TabuleiroGUI();
+    }
+
+    /**
+     * Função para colocar as peças nos botões
+     */
     private void desenhar() {
-        int x = 0, y = 0;   
+        this.jPanel1.removeAll();
+        this.jPanel1.revalidate();
+        this.jPanel1.repaint();
+        
+        int x = 0, y = 0;         
         for(int i = 0; i < 3; i++) {
             for(int j = 0; j < 3; j++) {
-                Botao botao = new Botao();
-                botao.setLinha(i);
-                botao.setColuna(j);
-                botao.setName("peca"+i+""+j);
-                //botao.setText("peca"+i+""+j);
-                botao.enable(true);
-                botao.setBounds(x, y, 70, 70);
-                botao.addActionListener(new java.awt.event.ActionListener() {
-                    @Override
-                    public void actionPerformed(java.awt.event.ActionEvent evt) {
-                        botaoOnClick(evt, botao.getLinha(), botao.getColuna());
-                    }
-                });
-                this.botoes[i][j] = botao;
+                Botao botao = this.botoes[i][j];
+                if(botao == null) {
+                    botao = new Botao();
+                    botao.setLinha(i);
+                    botao.setColuna(j);
+                    botao.setName("peca"+i+""+j);
+                    //botao.setText("peca"+i+""+j);
+                    botao.setEnabled(true);
+                    botao.setBounds(x, y, 70, 70);
+                    Botao btn = botao;
+                    botao.addActionListener(new java.awt.event.ActionListener() {
+                        @Override
+                        public void actionPerformed(java.awt.event.ActionEvent evt) {
+                            botaoOnClick(evt, btn.getLinha(), btn.getColuna());
+                        }
+                    });
+
+                    Peca peca = this.jogador.getTipo();
+                    peca.setNome(peca.getNome());                
+                    botao.setPeca(peca);            
+                    botao.setText(botao.getText());
+
+                    this.botoes[i][j] = botao;
+                }
                 this.jPanel1.add(botao);
                 x += 100;
             }
@@ -245,50 +395,216 @@ public class TabuleiroGUI extends javax.swing.JFrame {
     }
     
     
+    /**
+     * 
+     * @param ae
+     * @param linha
+     * @param coluna 
+     */
     public void botaoOnClick(ActionEvent ae, int linha, int coluna) {
+        
+        //Salvando estado anterior
+        this.salvarEstado();
+        
+        //Botão clicado
+        Botao botaoClicado = this.botoes[linha][coluna];
         
         TipoJogador tipoJogador = null;
         
-        //Verifico se não existe uma peça no botão
-        if(this.botoes[linha][coluna].getPeca() == null) {
-            this.botoes[linha][coluna].setPeca(this.jogador.getTipo());
-            this.botoes[linha][coluna].setText(this.jogador.getTipo().getNome());
+        //this.botoes[linha][coluna].setPeca(this.jogador.getTipo());
+        botaoClicado.setText(this.jogador.getTipo().getNome());
+        botaoClicado.getPeca().setNome(this.jogador.getTipo().getNome());
+        
+        //Se for do tipo X, troco para O
+        //Se for do tipo O, troco para X
+        if(botaoClicado.getPeca().getNome().equals("X")) {
+            tipoJogador = TipoJogador.values()[1];
+        } else {
+            tipoJogador = TipoJogador.values()[0];
+        }        
 
-            if(this.jogador.getTipo().getNome().equals("X")) {
-                tipoJogador = TipoJogador.values()[1];
-            } else {
-                tipoJogador = TipoJogador.values()[0];
-            }
-
+        //Iterator
+        BotoesIterator iterator = new BotoesIterator(this.botoes);
+        
+        //Verificando as linhas e colunas
+        boolean finalizou = this.verificarLinhasColunas(iterator, botaoClicado);        
+        
+        //Se o jogo não terminou
+        if(!finalizou) {
+            //Reseto as posições do iterator
+            iterator.reset();
+            //Verificando colunas e linhas
+            finalizou = this.verificarColunasLinhas(iterator, botaoClicado);
         }
         
+        //Se o jogo não terminou
+        if(!finalizou) {
+            //Verificando a diagonal primária
+            finalizou = this.verificarDiagonalPrimaria(botaoClicado);
+        }
         
-        int i = 0;
+        //Se o jogo não terminou
+        if(!finalizou) {
+            //Verificando a diagonal secundária
+            finalizou = this.verificarDiagonalSecundaria(botaoClicado);
+        }
+        
+        //Se o jogo terminou
+        if(finalizou) {
+           this.tabuleiro.setEstado(new TabuleiroFinalizado());
+           this.tabuleiro.finalizar();
+           this.lbJogador.setText(this.jogador.getTipo().getNome());
+           this.jLabel2.setText("Vencedor");
+           this.lbFinalizado.setText(this.tabuleiro.getEstado().getNome());
+           this.lbFinalizado.setEnabled(true);
+           
+           this.desabilitarBotoes();
+        } else {
+            this.jogador = tipoJogador.obterJogador();
+            this.lbJogador.setText(this.jogador.getTipo().getNome());
+        }
+        
+        //Caso houve clique em todos os botões, o jogo terminou em empate
+        if(3 * 3 == this.quantidadeClick) {
+            this.tabuleiro.setEstado(new TabuleiroFinalizado());
+            this.tabuleiro.finalizar();
+            this.lbJogador.setText("#empate");
+            this.jLabel2.setText("Não houve vencedor");
+            this.lbFinalizado.setText(this.tabuleiro.getEstado().getNome());
+            this.lbFinalizado.setEnabled(true);           
+            this.desabilitarBotoes();
+        }        
+        
+        this.quantidadeClick++;
+        
+        if(this.mementoPosicao >= 1) {
+            this.btnRestaurar.setEnabled(true);
+        }
+    }
+    /**
+     * Função para desabilitar os botões
+     */
+    private void desabilitarBotoes() {
+        for(int i = 0; i < 3; i++) {
+            for(int j = 0; j < 3; j++) {
+                this.botoes[i][j].setEnabled(false);
+            }
+        }
+    }
+    
+    /**
+     * Função para verificar as linhas e depois as colunas
+     * @param iterator
+     * @param botaoClicado
+     * @return 
+     */
+    private boolean verificarLinhasColunas(BotoesIterator iterator, Botao botaoClicado) {
         boolean finalizou = false;
-        for(int j = 0; j < 3; j++) {
-            if(this.botoes[i][j].getText().equals("X")) {
-                finalizou = true;
-            } else {
-                finalizou = false;
+        while(iterator.hasNextLine()) {
+            
+            if(finalizou)
+                break;
+            
+            while(iterator.hasNextColumn()) {
+                Botao botao = (Botao) iterator.nextColumn();                
+                if(botao.getText().equals(botaoClicado.getPeca().getNome())) {
+                    finalizou = true;
+                } else {
+                    finalizou = false;
+                    break;
+                }
+            }
+            iterator.resetColumn();
+            iterator.nextLine(); 
+        }
+        
+        return finalizou;
+    }
+    
+    /**
+     * Função para verificar as colunas e depois as linhas
+     * @param iterator
+     * @param botaoClicado
+     * @return 
+     */
+    private boolean verificarColunasLinhas(BotoesIterator iterator, Botao botaoClicado) {
+        boolean finalizou = false;
+        
+        //Iterando sobre as colunas
+        while(iterator.hasNextColumn()) {
+            
+            //Caso encontrou 3 do mesmo tipo nas linhas, saio da iteração
+            if(finalizou)
+                break;
+            
+            //Itrando sobre as linhas
+            while(iterator.hasNextLine()) {
+                Botao botao = (Botao) iterator.nextLine();
+                
+                if(botao.getText().equals(botaoClicado.getPeca().getNome())) {
+                    finalizou = true;
+                } else {
+                    finalizou = false;
+                    break;
+                }                
+            }
+            //Resetando o contador de linhas
+            iterator.resetLine();
+            //Passando para a próxima coluna
+            iterator.nextColumn();
+        }
+        
+        return finalizou;
+    }
+    
+    /**
+     * Função para percorrer a diagonal primária
+     * @param botao
+     * @return 
+     */
+    private boolean verificarDiagonalPrimaria(Botao botao) {
+        boolean finalizou = true;
+        for(int i = 0; i < 3; i++) {
+            for(int j = 0; j < 3; j++) {
+                if(i == j) {
+                    finalizou = this.botoes[i][j].getText().equals(botao.getPeca().getNome());
+                }
+            }
+            if(!finalizou) {
                 break;
             }
         }
         
-        System.out.println(""+finalizou);
-        
-        this.jogador = tipoJogador.obterJogador();
-        this.lbJogador.setText(this.jogador.getTipo().getNome());
-
-            
-        
+        return finalizou;
+    }
+    
+    /**
+     * Função para verificar a diagonal secundária
+     * @param botao
+     * @return 
+     */
+    private boolean verificarDiagonalSecundaria(Botao botao) {
+        boolean finalizou = true;
+        for(int i = 0; i < 3; i++) {
+            for(int j = 0; j < 3; j++) {
+                if((i + j) == 2) {
+                    finalizou = this.botoes[i][j].getText().equals(botao.getPeca().getNome());
+                }
+            }
+            if(!finalizou) {
+                break;
+            }
+        }        
+        return finalizou;
     }
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnFinalizar;
+    private javax.swing.JButton btnReiniciar;
     private javax.swing.JButton btnRestaurar;
-    private javax.swing.JButton btnSalvar;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JLabel lbFinalizado;
     private javax.swing.JLabel lbJogador;
+    private javax.swing.JLabel lbJogoFinalizado;
     // End of variables declaration//GEN-END:variables
 }

@@ -10,6 +10,11 @@ package Iterators;
  * @author Junnyor
  */
 public interface Iterator {
-    boolean hasNext();
-    Object next();
+    boolean hasNextLine();
+    boolean hasNextColumn();
+    Object nextColumn();
+    Object nextLine();
+    void reset();
+    void resetColumn();
+    void resetLine();
 }

@@ -14,8 +14,18 @@ import app.Tabuleiro;
  */
 public class TabuleiroFinalizado implements TabuleiroState {
 
+    private String nome = "Finalizado";
+    
     public TabuleiroFinalizado() {
 
+    }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
     }
     
     @Override

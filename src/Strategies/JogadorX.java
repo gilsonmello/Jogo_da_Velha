@@ -6,6 +6,7 @@
 package Strategies;
 
 import Prototype.Peca;
+import Prototype.PecaRepositorio;
 import app.PecaX;
 import java.util.ArrayList;
 
@@ -20,12 +21,15 @@ public class JogadorX implements JogadorStrategy {
     private PecaX tipo;
     
     public JogadorX() {
+        PecaRepositorio.loadRepositorio();
         this.tipo = new PecaX();
     }
 
     @Override
     public Peca getTipo() {
-        return this.tipo;
+        Peca peca = PecaRepositorio.getPeca("1");
+        peca.setNome("X");
+        return PecaRepositorio.getPeca("1");
     }
     
     public void setPeca(ArrayList<PecaX> pecas) {

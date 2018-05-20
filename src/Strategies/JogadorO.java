@@ -6,6 +6,7 @@
 package Strategies;
 
 import Prototype.Peca;
+import Prototype.PecaRepositorio;
 import app.PecaO;
 import java.util.ArrayList;
 
@@ -19,7 +20,8 @@ public class JogadorO implements JogadorStrategy{
     
     private PecaO tipo;
     
-     public JogadorO() {
+    public JogadorO() {
+        PecaRepositorio.loadRepositorio();
         this.tipo = new PecaO();
     }
     
@@ -37,7 +39,9 @@ public class JogadorO implements JogadorStrategy{
 
     @Override
     public Peca getTipo() {
-        return this.tipo;
+        Peca peca = PecaRepositorio.getPeca("1");
+        peca.setNome("O");
+        return peca;
     }
     
 }

@@ -15,4 +15,6 @@ import app.Tabuleiro;
 public interface TabuleiroState {
     void finalizar();
     void iniciar();
+    String getNome();
+    void setNome(String nome);
 }
